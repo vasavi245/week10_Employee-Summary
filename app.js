@@ -3,12 +3,9 @@ const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
 const inquire = require("inquirer");
 const fs = require("fs");
-const path = require("path");
-
-const OUTPUT_DIR = path.resolve(__dirname, "output")
-const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 
+// Questions to build team list
 var teamList = [];
 const managerQuestions = [
     {
@@ -164,14 +161,14 @@ function buildTeamList() {
         }
     })
 }
-
+// building html page in output folder
 function buildHtmlPage() {
     let newFile = fs.readFileSync("./templates/main.html")
     fs.writeFileSync("./output/teamPage.html", newFile, function (err) {
         if (err) throw err;
     })
 
-    console.log("Base page generated!");
+    console.log("Html page generated!");
 
     for (member of teamList) {
         if (member.getRole() == "Manager") {
@@ -185,20 +182,20 @@ function buildHtmlPage() {
     fs.appendFileSync("./output/teamPage.html", "</div></main></body></html>", function (err) {
         if (err) throw err;
     });
-    console.log("Page tags closed! Operation completed.")
 
 }
-
+// building the html card with type type of the employee and their details
 function buildHtmlCard(memberType, name, id, email, propertyValue) {
     let data = fs.readFileSync(`./templates/${memberType}.html`, 'utf8')
     data = data.replace("nameHere", name);
     data = data.replace("idHere", `ID: ${id}`);
     data = data.replace("emailHere", `Email: <a href="mailto:${email}">${email}</a>`);
     data = data.replace("propertyHere", propertyValue);
+    
     fs.appendFileSync("./output/teamPage.html", data, err => { if (err) throw err; })
-    console.log("Card appended");
 }
 
+// init function 
 function init() {
     inquire.prompt(managerQuestions).then(managerInfo => {
         let teamManager = new Manager(managerInfo.name, 1, managerInfo.email, managerInfo.officeNum);
